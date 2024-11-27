@@ -40,6 +40,11 @@ import androidx.compose.ui.unit.sp
 import com.example.diceroller.ui.theme.DiceRollerTheme
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        init {
+            System.loadLibrary("kotlin_ffi")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -54,6 +59,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+class Fraction {
+    var numerator = 0
+    var denominator = 0
+    var str = ""
+
+    fun printFunc(argString: String) {
+        println(argString)
+    }
+}
+
+external fun fractionMultiply(frac1: Fraction, frac2: Fraction): Int
 
 @Preview
 @Composable
@@ -79,7 +96,20 @@ fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
         Image(painter = painterResource(imageResource), contentDescription = result.toString())
         
         Button(
-            onClick = { result = (1..6).random() },
+            onClick = {
+                result = (1..6).random()
+                val frac1 = Fraction()
+                val frac2 = Fraction()
+                frac1.numerator = 10
+                frac1.denominator = 13
+                frac1.str = "Hello"
+                frac2.numerator = 9
+                frac2.denominator = 17
+                frac2.str = "World!"
+                val retval = fractionMultiply(frac1, frac2)
+                println("10/13 * 9/17 = " + frac1.numerator + "/" + frac1.denominator)
+                println("Error code = $retval")
+            },
         ) {
             Text(text = stringResource(R.string.roll), fontSize = 24.sp)
         }
